@@ -72,38 +72,30 @@ class Math {
      *  an an expression, it handles it by invoking this method.
      *  Thus, x/y and Math.divide(x,y) return the same value. */
     function int divide(int x, int y) {
-        var int q,absX,absY;
-        var bool isNeg;
-        let isNeg = false;
+        var int q,absX,absY,diff;
+        let diff = 0;
         let absX = Math.abs(x);
         let absY = Math.abs(y);
-        if((x < 0) & (y > 0)){
-            let isNeg = true;
-        }
 
-        if((x > 0) & (y < 0)){
-            let isNeg = true;
-        }
-
-        if(y > x){
+        if(absY > absX){
             return 0;
         }
 
-        let q = Math.divide(x, 2 * y);
-        if((x - ((2 * q) * y)) < y){
-            if(isNeg){
-                return -(2 * q);
-            } else {
-                return 2 * q;
-            }
+        let q = Math.divide(absX, 2 * absY);
+        if((absX - ((2 * q) * absY)) < absY){
+            let diff = 2 * q;
             
         } else {
-            if(isNeg){
-                return -(2 * q) + 1;
-            } else {
-                return (2 * q) + 1;
-            }
+            let diff = (2 * q) + 1;
         }
+
+        if((x < 0 & y > 0) | (x > 0 & y < 0)){
+            return -diff;
+        } else {
+            return diff;
+        }
+
+
     }
 
     /** Returns the integer part of the square root of x. */
