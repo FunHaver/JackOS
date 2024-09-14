@@ -76,7 +76,9 @@ class Math {
         let diff = 0;
         let absX = Math.abs(x);
         let absY = Math.abs(y);
-
+        if (x = 0 | y = 0){
+            return 0;
+        }
         if(absY > absX){
             return 0;
         }
@@ -100,25 +102,19 @@ class Math {
 
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
-        var int start,mid,end,ans;
-        let start = 0;
-        let end = x;
-
-        while(start < end | start = end){
-            let mid = (start + end) / 2;
-            if(mid * mid = x){
-                let ans = mid;
+        //16 bit numbers mean that we search from 0 to 16/2 - 1
+        var int y,j,c,csq;
+        let y = 0;
+        let j = 7;
+        while(j > -1){
+            let c = y + twoToThe[j];
+            let csq = c * c;
+            if((csq > 0) & ((csq < x) | (csq = x))){
+                let y = c;
             }
-
-            if (mid * mid < x){
-                let start = mid + 1;
-                let ans = mid;
-            } else {
-                let end = mid - 1;
-            }
+            let j = j - 1;
         }
-
-        return ans;
+        return y;
     }
 
     /** Returns the greater value. */
