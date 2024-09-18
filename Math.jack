@@ -38,6 +38,10 @@ class Math {
         }
     }
 
+    function int bitShiftLeft(int num){
+        return num + num;
+    }
+
     /** Returns the product of x and y. 
      *  When a Jack compiler detects the multiplication operator '*'
      *  in an expression, it handles it by invoking this method. 
@@ -56,7 +60,7 @@ class Math {
             if(Math.bit(i,absY)){
                 let sum = sum + shiftedX;
             }
-            let shiftedX = shiftedX + shiftedX;
+            let shiftedX = Math.bitShiftLeft(shiftedX);
             let i = i + 1;
         }
         if((x < 0 & y > 0) | (x > 0 & y < 0)){
@@ -71,32 +75,49 @@ class Math {
      *  When a Jack compiler detects the division operator '/'
      *  an an expression, it handles it by invoking this method.
      *  Thus, x/y and Math.divide(x,y) return the same value. */
-    function int divide(int x, int y) {
-        var int q,absX,absY,diff;
-        let diff = 0;
-        let absX = Math.abs(x);
-        let absY = Math.abs(y);
-        if (x = 0 | y = 0){
+
+     //https://en.wikipedia.org/wiki/Division_algorithm (long division)
+    function int divide(int numerator, int divisor) {
+        var int quotient,remainder,numeratorSize,i,numeratorBit,absNumerator,absDivisor;
+        if(divisor = 0){
             return 0;
         }
-        if(absY > absX){
-            return 0;
+        let absNumerator = numerator;
+        let absDivisor = divisor;
+        if(absNumerator < 0){
+            let absNumerator = Math.abs(absNumerator);
+        }
+        if(absDivisor < 0){
+            let absDivisor = Math.abs(absDivisor);
         }
 
-        let q = Math.divide(absX, 2 * absY);
-        if((absX - ((2 * q) * absY)) < absY){
-            let diff = 2 * q;
-            
-        } else {
-            let diff = (2 * q) + 1;
+        let quotient = 0;
+        let numeratorSize = 15;
+        let remainder = 0;
+        let i = numeratorSize;
+        while(i > -1){
+            let remainder = Math.bitShiftLeft(remainder); //e.g. 01 -> 10
+            let numeratorBit = Math.bit(i,absNumerator); // f(3,8) -> true a.k.a. 1
+            if(numeratorBit){
+                let remainder = remainder + 1;
+            }
+
+            if((remainder > absDivisor) | (remainder = absDivisor)){
+                let remainder = remainder - absDivisor;
+                let quotient = quotient + twoToThe[i];
+            }
+            let i = i - 1;
         }
 
-        if((x < 0 & y > 0) | (x > 0 & y < 0)){
-            return -diff;
-        } else {
-            return diff;
+        
+        if((numerator < 0) & (divisor > 0)){
+            return -quotient;
         }
 
+        if((numerator > 0) & (divisor < 0)){
+            return -quotient;
+        }
+        return quotient;
 
     }
 
@@ -143,5 +164,45 @@ class Math {
         } else {
             return -x;
         }
+    }
+
+    function int pow(int base, int power){
+        var int ans;
+        let ans = base;
+        while(power > 1){
+            let ans = ans * base;
+            let power = power - 1;
+        }
+        if(power = 1){
+            return ans;
+        } else {
+            return 1;
+        }
+    }
+
+    //Truncates to integer(e.g. log base 10 of 99) is 1
+    //Accepts all positive integers
+    function int log10(int x){
+        var int divByTen,ans;
+        let divByTen = x;
+        let ans = 0;
+
+        if(x < 10){
+            return 0;
+        } else {
+            while(divByTen > 9){
+                let divByTen = divByTen / 10;
+                let ans = ans + 1;
+            }
+
+            return ans;
+        }
+    }
+
+    function int mod(int x, int y){
+        while((x > y) | (x = y)){
+            let x = x - y;
+        }
+        return x;
     }
 }
