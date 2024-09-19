@@ -64,8 +64,27 @@ class String {
     /** Returns the integer value of this string, 
      *  until a non-digit character is detected. */
     method int intValue() {
+        var int v,i,d;
+        var boolean neg;
+        let v = 0;
+        let i = 0;
+        let neg = false;
+        if(str[i] = 45){
+            let i = 1;
+            let neg = true;
+        }
+
+        while(i < length()){
+            let d = str[i] - 48;
+            let v = (v * 10) + d;
+            let i = i + 1;
+        }
+        if(neg){
+            return -v;
+        } else {
+            return v;
+        }
         
-        return 0;
     }
 
     method void int2String(int n){
