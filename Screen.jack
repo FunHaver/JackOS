@@ -9,34 +9,136 @@
  * the screen is indexed (0,0).
  */
 class Screen {
-
+    static boolean color;
     /** Initializes the Screen. */
     function void init() {
+        let color = true;
+        return;
     }
+    
 
     /** Erases the entire screen. */
     function void clearScreen() {
+        return;
     }
 
     /** Sets the current color, to be used for all subsequent drawXXX commands.
      *  Black is represented by true, white by false. */
     function void setColor(boolean b) {
+        let color = b;
+        return;
     }
 
     /** Draws the (x,y) pixel, using the current color. */
     function void drawPixel(int x, int y) {
+        var int address, value,nthBit;
+        let address = (32 * y) + (x / 16);
+        let value = Memory.peek(16384 + address);
+        //Set (x % 16)th bit of value to current color
+        let nthBit = Math.mod(x,16);
+        //bitwise operation to guarantee bit value
+        if(color){
+            let value = value | Math.pow(2,nthBit);
+        } else {
+            let value = value & ~(Math.pow(2,nthBit));
+        }
+        do Memory.poke(16384 + address, value);
+        return;
     }
 
     /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
+    //Must be modified for 0,0 on top left
+    //Generalize to draw lines that go in any direction, not just up and right
+    //Horizontal and Vertical lines should be handled as special cases
     function void drawLine(int x1, int y1, int x2, int y2) {
+        var int x,y,dx,dy,offsetX,offsetY,diff,xDirection,yDirection;
+        let x = x1;
+        let y = y1;
+        let dx = Math.abs(x2 - x1);
+        let dy = Math.abs(y2 - y1);
+        let offsetX = 0;
+        let offsetY = 0;
+        let diff = 0;
+
+        //Determine direction of line
+        if(x2 < x1){
+            let xDirection = -1;
+        } else {
+            let xDirection = 1;
+        }
+
+        if(y2 < y1){
+            let yDirection = -1;
+        } else {
+            let yDirection = 1;
+        }
+
+        //horizontal line
+        if(dy = 0){
+            while((Math.abs(offsetX) < dx) | (Math.abs(offsetX) = dx)){
+                if(((Math.mod(x+Math.abs(offsetX),16)) = 0) & ((Math.abs(x2-(x+offsetX))) > 16)){
+                    do Memory.poke(16384 + ((32 * y) + ((x+offsetX) / 16)), -1);
+                    let offsetX = offsetX + (xDirection * 16);
+                } else {
+                    do Screen.drawPixel(x+offsetX, y);
+                    let offsetX = offsetX + xDirection;
+                }
+
+            } 
+            return;
+        }
+        //vertical line
+        
+        if(dx = 0){
+            while((Math.abs(offsetY) < dy) | (Math.abs(offsetY) = dy)){
+                do Screen.drawPixel(x, y+offsetY);
+                let offsetY = offsetY + yDirection;
+            } 
+            return;
+        }
+
+        //diagonal line
+        while(((Math.abs(offsetX) < dx) | (Math.abs(offsetX) = dx)) & ((Math.abs(offsetY) < dy) | (Math.abs(offsetY) = dy))){
+        
+            do Screen.drawPixel(x+offsetX, y+offsetY);
+            let diff = (Math.abs(offsetX) * dy) - (Math.abs(offsetY) * dx);
+            if (diff < 0) {
+                let offsetX = offsetX + xDirection;
+            } else {
+                let offsetY = offsetY + yDirection;
+            }
+
+        }
+        return;
     }
 
     /** Draws a filled rectangle whose top left corner is (x1, y1)
      *  and bottom right corner is (x2,y2), using the current color. */
     function void drawRectangle(int x1, int y1, int x2, int y2) {
+        var int rows,currentRow,direction;
+        let rows = Math.abs(y2 - y1);
+        let currentRow = 0;
+
+        if(y2 < y1){
+            let direction = -1;
+        } else {
+            let direction = 1;
+        }
+        while(currentRow < rows){
+            do Screen.drawLine(x1,y1+(direction*currentRow),x2,y1+(direction * currentRow));
+            let currentRow = currentRow + 1;
+        }
+
+        return;
     }
 
     /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
+    //Can overflow, limit r to <= 181 to avoid
     function void drawCircle(int x, int y, int r) {
+        //for each dy range[-r, r]:
+            //x1 = x - sqrt(r^2 - dy^2)
+            //x2 = x + sqrt(r^2 - dy^2)
+            //drawLine(x1,y+dy, x2, y+dy)
+            return;
     }
 }

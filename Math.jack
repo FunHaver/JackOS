@@ -42,26 +42,39 @@ class Math {
         return num + num;
     }
 
+    function int bitShiftRight(int num){
+        var int i,y;
+        while(i < 15){
+            let y = y + y;
+            if(num < 0){
+                let y = y | 1;
+            }
+            let num = num + num;
+            let i = i + 1;
+        }
+        return y;
+    }
+
     /** Returns the product of x and y. 
      *  When a Jack compiler detects the multiplication operator '*'
      *  in an expression, it handles it by invoking this method. 
      *  Thus, in Jack, x * y and Math.multiply(x,y) return the same value. */
     function int multiply(int x, int y) {
-        var int sum,shiftedX,i,absX,absY;
+        var int sum,shiftedX,i,absX,absY,bit;
         let sum = 0;
         let i = 0;     
-
         let absX = Math.abs(x);
         let absY = Math.abs(y);
         let shiftedX = absX;
-
+        let bit = 1;
         while(i < 16) {
 
-            if(Math.bit(i,absY)){
+            if((absY & bit) = bit){
                 let sum = sum + shiftedX;
             }
             let shiftedX = Math.bitShiftLeft(shiftedX);
             let i = i + 1;
+            let bit = bit + bit;
         }
         if((x < 0 & y > 0) | (x > 0 & y < 0)){
             return -sum;
