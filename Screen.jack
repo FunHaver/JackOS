@@ -77,7 +77,12 @@ class Screen {
         if(dy = 0){
             while((Math.abs(offsetX) < dx) | (Math.abs(offsetX) = dx)){
                 if(((Math.mod(x+Math.abs(offsetX),16)) = 0) & ((Math.abs(x2-(x+offsetX))) > 16)){
-                    do Memory.poke(16384 + ((32 * y) + ((x+offsetX) / 16)), -1);
+                    if(color){
+                        do Memory.poke(16384 + ((32 * y) + ((x+offsetX) / 16)), -1);
+                    } else {
+                        do Memory.poke(16384 + ((32 * y) + ((x+offsetX) / 16)), 0);
+
+                    }
                     let offsetX = offsetX + (xDirection * 16);
                 } else {
                     do Screen.drawPixel(x+offsetX, y);
@@ -135,10 +140,18 @@ class Screen {
     /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
     //Can overflow, limit r to <= 181 to avoid
     function void drawCircle(int x, int y, int r) {
-        //for each dy range[-r, r]:
-            //x1 = x - sqrt(r^2 - dy^2)
-            //x2 = x + sqrt(r^2 - dy^2)
-            //drawLine(x1,y+dy, x2, y+dy)
+        var int dy,x1,x2,dy;
+        let dy = -r;
+        if(r < 182){
+            //for each dy range[-r, r]:
+            while(dy < (r+1)){
+                let x1 = x - Math.sqrt(Math.pow(r,2) - Math.pow(dy,2));
+                let x2 = x + Math.sqrt(Math.pow(r,2) - Math.pow(dy,2));
+                do Screen.drawLine(x1,y+dy,x2,y+dy);
+                let dy = dy + 1;
+            }
+        }
+
             return;
     }
 }
